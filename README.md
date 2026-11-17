@@ -1,4 +1,4 @@
-# Car A/C UI
+# Car Dashboard UI
 
 A dark, animated car climate-control UI for a 720x1280 portrait touch display, built with
 **LVGL Pro** and LVGL 9.6: a driving Controls screen with speed and gear dials, an A/C screen
