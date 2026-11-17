@@ -1,0 +1,138 @@
+<!-- The speed dial: gradient arc, tick ring and the number, all following subject_speed -->
+<component>
+	<previews>
+		<preview name="default" width="560" height="560" style_bg_color="0x000000" style_pad_all="40" />
+	</previews>
+
+	<styles>
+		<style name="style_ring" radius="1000" border_width="2" border_color="{color_white}" border_opa="85%" />
+		<style name="style_track" arc_color="{color_navy}" arc_width="22" arc_rounded="true" />
+		<!-- The gradient comes from the image; the round ends are cut out of it too -->
+		<style name="style_value" arc_width="22" arc_rounded="true" arc_color="{color_red}" arc_image_src="img_arc_speed" />
+		<!-- A dot on the arc at every labelled speed: a round tick as long as it is wide -->
+		<style name="style_dot" line_color="{color_white}" line_opa="13%" line_width="7" line_rounded="true" length="1" />
+		<style name="style_dot_reached" line_opa="40%" />
+		<style name="style_numbers" text_font="font_small" text_color="{color_text_dim}" line_opa="0" length="0" pad_radial="0" />
+		<style name="style_no_line" line_opa="0" arc_opa="0" arc_width="0" length="0" />
+		<style name="style_tick" line_color="{color_tick_idle}" line_width="3" length="17" />
+		<style name="style_tick_passed" line_color="{color_red}" />
+		<style name="style_tick_rim" arc_color="{color_red}" arc_opa="45%" arc_width="1" />
+		<style name="style_range_arc" arc_color="0x8A2A7A" arc_width="3" arc_rounded="true" />
+	</styles>
+
+	<view extends="box" width="{speedo_size}" height="{speedo_size}">
+		<box width="100%" height="100%">
+			<style name="style_ring" />
+		</box>
+
+		<lv_arc
+			width="452"
+			height="452"
+			align="center"
+			clickable="false"
+			rotation="135"
+			bg_start_angle="0"
+			bg_end_angle="270"
+			min_value="0"
+			max_value="120"
+			bind_value="subject_speed"
+		>
+			<style name="style_box" />
+			<style name="style_track" />
+			<style name="style_value" selector="indicator" />
+			<style name="style_hidden_part" selector="knob" />
+		</lv_arc>
+
+		<!-- The dots sit on the middle of the arc; the one at the current speed is brighter -->
+		<lv_scale
+			width="437"
+			height="437"
+			align="center"
+			mode="round_inner"
+			rotation="135"
+			angle_range="270"
+			min_value="0"
+			max_value="120"
+			total_tick_count="7"
+			major_tick_every="1"
+			label_show="false"
+			send_draw_task_events="true"
+		>
+			<!-- LVGL draws the ticks of a section without the inherited opa, see the callback -->
+			<event_cb callback="scale_section_opa_cb" trigger="draw_task_added" />
+			<style name="style_box" />
+			<style name="style_no_line" />
+			<style name="style_no_line" selector="items" />
+			<style name="style_dot" selector="indicator" />
+			<lv_scale-section bind_min_value="subject_speed" bind_max_value="subject_speed" style_indicator="style_dot_reached" />
+		</lv_scale>
+
+		<!-- 0 .. 120 in steps of 20 -->
+		<lv_scale
+			width="398"
+			height="398"
+			align="center"
+			mode="round_inner"
+			rotation="135"
+			angle_range="270"
+			min_value="0"
+			max_value="120"
+			total_tick_count="7"
+			major_tick_every="1"
+			label_show="true"
+		>
+			<style name="style_box" />
+			<style name="style_no_line" />
+			<style name="style_no_line" selector="items" />
+			<style name="style_numbers" selector="indicator" />
+		</lv_scale>
+
+		<!-- Fine ticks, red up to the current speed, on a thin rim -->
+		<lv_scale
+			width="320"
+			height="320"
+			align="center"
+			mode="round_inner"
+			rotation="135"
+			angle_range="270"
+			min_value="0"
+			max_value="120"
+			total_tick_count="91"
+			major_tick_every="5"
+			label_show="false"
+			send_draw_task_events="true"
+		>
+			<event_cb callback="scale_section_opa_cb" trigger="draw_task_added" />
+			<style name="style_box" />
+			<style name="style_no_line" />
+			<style name="style_tick" selector="items" />
+			<style name="style_tick" selector="indicator" />
+			<lv_scale-section min_value="0" bind_max_value="subject_speed" style_items="style_tick_passed" style_indicator="style_tick_passed" />
+		</lv_scale>
+		<lv_arc width="280" height="280" align="center" clickable="false" bg_start_angle="150" bg_end_angle="30">
+			<style name="style_box" />
+			<style name="style_tick_rim" />
+			<style name="style_hidden_part" selector="indicator" />
+			<style name="style_hidden_part" selector="knob" />
+		</lv_arc>
+
+		<lv_label text="{subject_speed}" align="center" y="-22" style_text_font="font_speed" style_text_color="{color_white}" style_text_letter_space="-3" />
+		<lv_label text="mph" align="center" y="80" style_text_font="font_unit" style_text_color="{color_text_dim}" />
+
+		<box width="content" height="content" align="center" y="182" flex_flow="row" style_pad_column="8" style_flex_cross_place="center" style_flex_track_place="center">
+			<lv_image src="icon_fuel">
+				<style name="style_icon_dim" />
+			</lv_image>
+			<lv_label text="{subject_range . ' mi'}">
+				<style name="style_text_dim" />
+			</lv_label>
+		</box>
+
+		<lv_arc width="436" height="436" align="center" clickable="false" bg_start_angle="62" bg_end_angle="118">
+			<style name="style_box" />
+			<style name="style_range_arc" />
+			<style name="style_hidden_part" selector="indicator" />
+			<style name="style_hidden_part" selector="knob" />
+		</lv_arc>
+	</view>
+</component>

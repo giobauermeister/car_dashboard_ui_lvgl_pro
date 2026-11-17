@@ -1,0 +1,148 @@
+<globals>
+	<api>
+		<!-- XML cannot reference <enumdef> members, so the ref_* ints in <consts>
+		     are the vocabulary shared with C. custom/car_ac_logic.c mirrors them. -->
+	</api>
+
+	<consts>
+		<!-- Palette -->
+		<color name="color_bg" value="0x000000" />
+		<color name="color_white" value="0xFFFFFF" />
+		<color name="color_text_dim" value="0x9A9AA5" />
+		<color name="color_text_muted" value="0x6E6E78" />
+		<color name="color_red" value="0xE0193F" />
+		<color name="color_blue" value="0x3A40E0" />
+		<color name="color_purple" value="0x4B2A9C" />
+		<color name="color_navy" value="0x14163F" />
+		<color name="color_tick_idle" value="0x27308A" />
+		<color name="color_line" value="0x2A2A30" />
+		<color name="color_sheet_top" value="0x242426" />
+		<color name="color_sheet_bottom" value="0x121214" />
+		<color name="color_card_top" value="0x1C1C20" />
+		<color name="color_card_bottom" value="0x141A36" />
+		<color name="color_card_border" value="0x2E303C" />
+		<color name="color_track" value="0x0B0C12" />
+		<color name="color_drawer" value="0x1C1C1E" />
+
+		<!-- Geometry, for the 720x1280 portrait display -->
+		<px name="speedo_size" value="480" />
+		<px name="gear_size" value="360" />
+		<px name="panel_w" value="110" />
+		<!-- The panel image plus room on the inner side, where the icons overshoot in the intro -->
+		<px name="panel_box_w" value="150" />
+		<px name="panel_h" value="680" />
+		<px name="radius_row" value="14" />
+		<px name="radius_card" value="28" />
+		<px name="radius_sheet" value="36" />
+		<px name="space_page" value="28" />
+		<!-- One segment of a segmented control; three of them fill a card -->
+		<px name="seg_w" value="198" />
+		<px name="seg_h" value="70" />
+
+		<!-- The Mode Control sheet slides between these two y positions.
+		     custom/car_ac_logic.c mirrors them. -->
+		<px name="sheet_open_y" value="140" />
+		<px name="sheet_closed_y" value="1130" />
+		<px name="sheet_h" value="1200" />
+		<px name="sheet_handle_h" value="150" />
+
+		<!-- Enum mirrors -->
+		<int name="ref_gear_park" value="0" />
+		<int name="ref_gear_drive" value="1" />
+		<int name="ref_ac_mode_pet" value="0" />
+		<int name="ref_ac_mode_normal" value="1" />
+		<int name="threshold_min" value="15" />
+		<int name="threshold_max" value="30" />
+	</consts>
+
+	<subjects>
+		<!-- Subject values are literals: the C export does not resolve a {const} here -->
+		<!-- Controls screen -->
+		<int name="subject_speed" value="60" min_value="0" max_value="120" />
+		<int name="subject_range" value="200" />
+		<int name="subject_power" value="1" min_value="0" max_value="1" />
+		<int name="subject_gear" value="1" min_value="0" max_value="1" />
+		<!-- 0: Eco, 1: Comfort, 2: Sport -->
+		<int name="subject_drive_mode" value="2" min_value="0" max_value="2" />
+		<!-- The highlighted shortcut of the right panel -->
+		<int name="subject_feature" value="0" min_value="0" max_value="3" />
+		<!-- C pulses it to 1 the first time a Controls screen object loads, which plays the intro once -->
+		<int name="subject_intro" value="0" min_value="0" max_value="1" />
+
+		<!-- A/C screen -->
+		<int name="subject_exterior_temp" value="32" />
+		<int name="subject_interior_temp" value="20" />
+		<int name="subject_defrost" value="0" min_value="0" max_value="1" />
+		<int name="subject_ac_mode" value="1" min_value="0" max_value="1" />
+		<!-- 0: OFF, 1: NO A/C, 2: ON -->
+		<int name="subject_temp_control" value="2" min_value="0" max_value="2" />
+		<int name="subject_threshold" value="26" min_value="15" max_value="30" />
+		<!-- 0: 18 deg, 1: 22 deg, 2: 26 deg. C copies the preset into subject_threshold -->
+		<int name="subject_preset" value="1" min_value="0" max_value="2" />
+		<!-- 0: sheet closed, 100: sheet open. Written by C while the sheet moves -->
+		<int name="subject_sheet_pos" value="0" min_value="0" max_value="100" />
+
+		<int name="subject_settings_open" value="0" min_value="0" max_value="1" />
+		<string name="subject_clock" value="02:58" />
+	</subjects>
+
+	<images>
+		<!-- The icons are Material Design Icons (images/svg), rasterized to white-on-alpha PNGs.
+		     a8 keeps only the shape: the color comes from style_icon / style_icon_dim. -->
+		<data name="icon_settings" src_path="images/icons/settings.png" color_format="a8" />
+		<data name="icon_car" src_path="images/icons/car.png" color_format="a8" />
+		<data name="icon_fan" src_path="images/icons/fan.png" color_format="a8" />
+		<data name="icon_steering" src_path="images/icons/steering.png" color_format="a8" />
+		<data name="icon_speedometer" src_path="images/icons/speedometer.png" color_format="a8" />
+		<data name="icon_wiper" src_path="images/icons/wiper.png" color_format="a8" />
+		<data name="icon_seat_heat" src_path="images/icons/seat_heat.png" color_format="a8" />
+		<data name="icon_car_door" src_path="images/icons/car_door.png" color_format="a8" />
+		<data name="icon_power" src_path="images/icons/power.png" color_format="a8" />
+		<data name="icon_fuel" src_path="images/icons/fuel.png" color_format="a8" />
+		<data name="icon_chevron_left" src_path="images/icons/chevron_left.png" color_format="a8" />
+		<data name="icon_chevron_right" src_path="images/icons/chevron_right.png" color_format="a8" />
+		<data name="icon_back" src_path="images/icons/back.png" color_format="a8" />
+		<data name="icon_close" src_path="images/icons/close.png" color_format="a8" />
+		<data name="icon_minus" src_path="images/icons/minus.png" color_format="a8" />
+		<data name="icon_plus" src_path="images/icons/plus.png" color_format="a8" />
+		<data name="icon_paw" src_path="images/icons/paw.png" color_format="a8" />
+		<data name="icon_thermometer" src_path="images/icons/thermometer.png" color_format="a8" />
+		<data name="icon_defrost" src_path="images/icons/defrost.png" color_format="a8" />
+		<data name="icon_wifi" src_path="images/icons/wifi.png" color_format="a8" />
+		<data name="icon_battery" src_path="images/icons/battery.png" color_format="a8" />
+		<data name="icon_triangle" src_path="images/icons/triangle.png" color_format="a8" />
+		<data name="icon_mode_fan" src_path="images/icons/mode_fan.png" color_format="a8" />
+
+		<data name="img_car" src_path="images/car.png" color_format="rgb565" />
+		<data name="img_arc_gear" src_path="images/arc_gear.png" color_format="rgb565" />
+		<data name="img_arc_speed" src_path="images/arc_speed.png" color_format="rgb565" />
+		<data name="img_panel_left" src_path="images/panel_left.png" color_format="argb8888" />
+		<data name="img_panel_right" src_path="images/panel_right.png" color_format="argb8888" />
+		<data name="icon_park" src_path="images/icons/park.png" color_format="a8" />
+	</images>
+
+	<fonts>
+		<bin name="font_speed" src_path="fonts/Inter_28pt-Bold.ttf" size="124" bpp="4" as_file="false" range="0x30-0x39" />
+		<bin name="font_gear" src_path="fonts/Inter_28pt-Bold.ttf" size="88" bpp="4" as_file="false" symbols="PRND" />
+		<bin name="font_value" src_path="fonts/Inter_28pt-SemiBold.ttf" size="56" bpp="4" as_file="false" range="0x30-0x39" symbols="°" />
+		<bin name="font_title" src_path="fonts/Inter_28pt-SemiBold.ttf" size="30" bpp="4" as_file="false" range="0x20-0x7F" symbols="°" />
+		<bin name="font_temp" src_path="fonts/Inter_28pt-SemiBold.ttf" size="34" bpp="4" as_file="false" range="0x20-0x7F" symbols="°" />
+		<bin name="font_body" src_path="fonts/Inter_28pt-Medium.ttf" size="26" bpp="4" as_file="false" range="0x20-0x7F" symbols="°•" />
+		<bin name="font_small" src_path="fonts/Inter_28pt-Regular.ttf" size="23" bpp="4" as_file="false" range="0x20-0x7F" symbols="°•" />
+		<bin name="font_unit" src_path="fonts/Inter_28pt-Regular.ttf" size="32" bpp="4" as_file="false" range="0x20-0x7F" />
+	</fonts>
+
+	<styles>
+		<!-- A plain, invisible container -->
+		<style name="style_box" bg_opa="0" border_width="0" outline_width="0" shadow_width="0" pad_all="0" radius="0" />
+		<!-- Arcs used as decoration: no knob, no value arc -->
+		<style name="style_hidden_part" bg_opa="0" arc_opa="0" border_width="0" pad_all="0" />
+		<style name="style_icon" image_recolor="{color_white}" image_recolor_opa="255" />
+		<style name="style_icon_dim" image_recolor="{color_text_dim}" image_recolor_opa="255" />
+		<style name="style_text_title" text_font="font_title" text_color="{color_white}" />
+		<style name="style_text_body" text_font="font_body" text_color="{color_white}" />
+		<style name="style_text_dim" text_font="font_small" text_color="{color_text_dim}" />
+		<style name="style_gradient" bg_opa="255" bg_color="{color_purple}" bg_grad_color="{color_red}" bg_grad_dir="hor" />
+		<style name="style_pressed" opa="60%" />
+	</styles>
+</globals>

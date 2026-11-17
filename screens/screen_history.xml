@@ -1,0 +1,45 @@
+<!-- Temperature History: every change of the activation threshold, newest first.
+     custom/car_ac_logic.c fills `history_list` with <history_item>s when the screen loads. -->
+<screen permanent="true">
+	<styles>
+		<style name="style_screen" bg_color="{color_bg}" bg_opa="255" />
+		<style name="style_divider" bg_opa="255" bg_color="{color_line}" />
+	</styles>
+
+	<view scrollable="false">
+		<style name="style_screen" />
+		<event_cb callback="history_screen_load_cb" trigger="screen_load_start" />
+
+		<status_bar />
+
+		<box width="100%" height="84" y="60">
+			<lv_label text="Temperature History" align="left_mid" x="36">
+				<style name="style_text_title" />
+			</lv_label>
+			<lv_image src="icon_close" align="right_mid" x="-40" clickable="true" ext_click_area="20">
+				<style name="style_icon_dim" />
+				<style name="style_pressed" selector="pressed" />
+				<event_cb callback="history_close_cb" trigger="clicked" />
+			</lv_image>
+			<box width="100%" height="1" align="bottom_mid">
+				<style name="style_divider" />
+			</box>
+		</box>
+
+		<box
+			width="100%"
+			height="1136"
+			y="144"
+			scrollable="true"
+			scroll_dir="ver"
+			flex_flow="column"
+			style_pad_hor="{space_page}"
+			style_pad_top="24"
+			style_pad_bottom="40"
+			style_pad_row="16"
+		>
+			<lv_label text="Nov 25" style_text_font="font_body" style_text_color="{color_white}" style_pad_left="6" />
+			<box name="history_list" width="100%" height="content" flex_flow="column" style_pad_row="14" />
+		</box>
+	</view>
+</screen>

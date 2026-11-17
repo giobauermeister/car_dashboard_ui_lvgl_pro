@@ -1,0 +1,152 @@
+<!-- Controls: speed, gear and drive mode, with the shortcut panels on both sides -->
+<screen permanent="true">
+	<animations>
+		<!-- The intro, after the reference video. Everything overlaps: the gear dial shrinks from
+		     the first frame, the speed dial comes in while it lands, the panels right after.
+		     An easing has to be a literal. bezier(x1 y1 x2 y2) is as in CSS, and a y above 1 runs
+		     past the end value and comes back: bezier(0.25 1.9 0.75 1) peaks 21 % past it at half
+		     time, bezier(0.25 2.3 0.75 1) 36 %. -->
+		<timeline name="timeline_intro">
+			<!-- The gear dial starts large and zooms out to its place -->
+			<animation target="gear" prop="opa" start="0" end="255" duration="250" early_apply="true" />
+			<animation target="gear" prop="transform_scale_x" start="560" end="256" duration="750" easing="bezier(0.3 0.6 0.3 1)" early_apply="true" />
+			<animation target="gear" prop="transform_scale_y" start="560" end="256" duration="750" easing="bezier(0.3 0.6 0.3 1)" early_apply="true" />
+			<animation target="title" prop="opa" start="0" end="255" duration="400" delay="250" early_apply="true" />
+			<animation target="power" prop="opa" start="0" end="255" duration="400" delay="250" early_apply="true" />
+
+			<!-- The values of the two dials. A timeline animates style properties only, so these
+			     run on two empty objects, and C copies the number into the arc angle of the gear
+			     band (126 is closed, 405 open) and into subject_speed. -->
+			<animation target="intro_band" prop="translate_x" start="127" end="405" duration="800" delay="200" easing="ease_in_out" early_apply="true" />
+			<animation target="intro_speed" prop="translate_x" start="0" end="60" duration="900" delay="450" easing="ease_out" early_apply="true" />
+
+			<!-- The speed dial fades in while it jumps up from below, past its place, and settles -->
+			<animation target="speedo" prop="opa" start="0" end="255" duration="400" delay="350" early_apply="true" />
+			<animation target="speedo" prop="translate_y" start="120" end="0" duration="700" delay="350" easing="bezier(0.25 1.9 0.75 1)" early_apply="true" />
+
+			<!-- The panels grow out of the display edges and push inwards before they settle -->
+			<animation target="panel_left" prop="opa" start="0" end="255" duration="200" delay="650" early_apply="true" />
+			<animation target="panel_left" prop="transform_scale_x" start="12" end="256" duration="320" delay="650" easing="ease_out" early_apply="true" />
+			<animation target="panel_left" prop="transform_scale_y" start="184" end="256" duration="320" delay="650" easing="ease_out" early_apply="true" />
+			<animation target="panel_left" prop="translate_x" start="-60" end="0" duration="780" delay="650" easing="bezier(0.25 1.9 0.75 1)" early_apply="true" />
+
+			<animation target="panel_right" prop="opa" start="0" end="255" duration="200" delay="650" early_apply="true" />
+			<animation target="panel_right" prop="transform_scale_x" start="12" end="256" duration="320" delay="650" easing="ease_out" early_apply="true" />
+			<animation target="panel_right" prop="transform_scale_y" start="184" end="256" duration="320" delay="650" easing="ease_out" early_apply="true" />
+			<animation target="panel_right" prop="translate_x" start="60" end="0" duration="780" delay="650" easing="bezier(0.25 1.9 0.75 1)" early_apply="true" />
+
+			<!-- The icons follow from the edge and overshoot further than their panel -->
+			<animation target="icons_left" prop="opa" start="0" end="255" duration="150" delay="800" early_apply="true" />
+			<animation target="icons_left" prop="translate_x" start="-60" end="0" duration="720" delay="800" easing="bezier(0.25 2.3 0.75 1)" early_apply="true" />
+
+			<animation target="icons_right" prop="opa" start="0" end="255" duration="150" delay="800" early_apply="true" />
+			<animation target="icons_right" prop="translate_x" start="60" end="0" duration="720" delay="800" easing="bezier(0.25 2.3 0.75 1)" early_apply="true" />
+		</timeline>
+	</animations>
+
+	<styles>
+		<style name="style_screen" bg_color="{color_bg}" bg_opa="255" />
+		<style name="style_power_ring" radius="1000" bg_opa="255" bg_color="0x0A0A12" border_width="2" border_color="0x2A2A36" />
+		<style name="style_power" radius="1000" bg_opa="255" bg_color="{color_purple}" bg_grad_color="{color_red}" bg_grad_dir="ver" />
+		<style name="style_power_off" bg_color="0x2A2A36" bg_grad_color="0x3A3A46" />
+	</styles>
+
+	<view scrollable="false">
+		<style name="style_screen" />
+		<!-- C sets subject_intro on the first load, so coming back from another screen does not replay the intro -->
+		<event_cb callback="controls_screen_load_cb" trigger="screen_load_start" />
+		<play_timeline_event trigger="{subject_intro == 1}" target="self" timeline="timeline_intro" />
+
+		<!-- Carriers of the dial values the intro animates. See timeline_intro. -->
+		<box name="intro_band" width="0" height="0">
+			<event_cb callback="intro_band_cb" trigger="style_changed" />
+		</box>
+		<box name="intro_speed" width="0" height="0">
+			<event_cb callback="intro_speed_cb" trigger="style_changed" />
+		</box>
+
+		<status_bar />
+
+		<box name="title" width="100%" height="64" y="60">
+			<lv_label text="Controls" align="center">
+				<style name="style_text_title" />
+			</lv_label>
+			<lv_image src="icon_settings" align="right_mid" x="-52" clickable="true" ext_click_area="20">
+				<style name="style_icon_dim" />
+				<style name="style_pressed" selector="pressed" />
+				<set_subject_event subject="subject_settings_open" value="1" />
+			</lv_image>
+		</box>
+
+		<speedometer name="speedo" align="top_mid" y="130" />
+
+		<gear_dial name="gear" align="top_mid" y="654" style_transform_pivot_x="50%" style_transform_pivot_y="50%" />
+
+		<box name="power" width="130" height="130" align="top_mid" y="1104" clickable="true">
+			<style name="style_power_ring" />
+			<style name="style_pressed" selector="pressed" />
+			<set_subject_event subject="subject_power" value="{!subject_power}" />
+			<box width="100" height="100" align="center" clickable="false">
+				<style name="style_power" />
+				<style name="style_power_off" enabled="{subject_power == 0}" />
+				<lv_image src="icon_power" align="center">
+					<style name="style_icon" />
+				</lv_image>
+			</box>
+		</box>
+
+		<!-- Left panel: where to go. The box is wider than the panel image, which leaves the
+		     icons room to overshoot, and it scales from the display edge in the intro. -->
+		<box
+			name="panel_left"
+			width="{panel_box_w}"
+			height="{panel_h}"
+			x="14"
+			y="578"
+			style_transform_pivot_x="0"
+			style_transform_pivot_y="50%"
+		>
+			<lv_image src="img_panel_left" />
+			<box name="icons_left" width="{panel_w}" height="100%">
+				<icon_button icon="icon_car" align="top_mid" y="93" />
+				<icon_button icon="icon_fan" align="top_mid" y="230">
+					<screen_load_event screen="screen_ac" anim_type="fade_in" duration="500" />
+				</icon_button>
+				<icon_button icon="icon_park" align="top_mid" y="364" active="{subject_gear == ref_gear_park}">
+					<set_subject_event subject="subject_gear" value="{!subject_gear}" />
+				</icon_button>
+				<icon_button icon="icon_steering" align="top_mid" y="499" />
+			</box>
+		</box>
+
+		<!-- Right panel: one highlighted shortcut at a time -->
+		<box
+			name="panel_right"
+			width="{panel_box_w}"
+			height="{panel_h}"
+			align="top_right"
+			x="-14"
+			y="578"
+			style_transform_pivot_x="100%"
+			style_transform_pivot_y="50%"
+		>
+			<lv_image src="img_panel_right" align="top_right" />
+			<box name="icons_right" width="{panel_w}" height="100%" align="top_right">
+				<icon_button icon="icon_speedometer" align="top_mid" y="93" active="{subject_feature == 0}">
+					<set_subject_event subject="subject_feature" value="0" />
+				</icon_button>
+				<icon_button icon="icon_wiper" align="top_mid" y="230" active="{subject_feature == 1}">
+					<set_subject_event subject="subject_feature" value="1" />
+				</icon_button>
+				<icon_button icon="icon_seat_heat" align="top_mid" y="364" active="{subject_feature == 2}">
+					<set_subject_event subject="subject_feature" value="2" />
+				</icon_button>
+				<icon_button icon="icon_car_door" align="top_mid" y="499" active="{subject_feature == 3}">
+					<set_subject_event subject="subject_feature" value="3" />
+				</icon_button>
+			</box>
+		</box>
+
+		<settings_drawer />
+	</view>
+</screen>

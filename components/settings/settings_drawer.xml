@@ -1,0 +1,68 @@
+<!-- The Settings drawer. It slides in from the right while subject_settings_open is 1:
+     the subject drives the checked state, and the state change animates the styles.
+     Put it last on a screen, so it covers everything else. -->
+<component>
+	<styles>
+		<style name="style_scrim" bg_opa="55%" bg_color="{color_bg}" opa="0">
+			<transition props="opa" duration="250" />
+		</style>
+		<style name="style_scrim_open" opa="255" />
+		<style name="style_panel" bg_opa="255" bg_color="{color_drawer}" radius="{radius_sheet}" translate_x="600">
+			<transition props="translate_x" duration="300" easing="ease_out" />
+		</style>
+		<style name="style_panel_open" translate_x="0" />
+		<style name="style_item_pressed" bg_opa="255" bg_color="0x2A2A2E" />
+	</styles>
+
+	<view extends="box" width="100%" height="100%" clickable="false">
+		<!-- Dims the screen, and closes the drawer when clicked -->
+		<box
+			width="100%"
+			height="100%"
+			clickable="true"
+			hidden="{subject_settings_open == 0}"
+			checked="{subject_settings_open == 1}"
+		>
+			<style name="style_scrim" />
+			<style name="style_scrim_open" selector="checked" />
+			<set_subject_event subject="subject_settings_open" value="0" />
+		</box>
+
+		<!-- Wider than the visible part, so the right corners stay off screen -->
+		<box width="620" height="100%" x="140" clickable="true" checked="{subject_settings_open == 1}">
+			<style name="style_panel" />
+			<style name="style_panel_open" selector="checked" />
+
+			<lv_label text="Settings" x="44" y="122">
+				<style name="style_text_title" />
+			</lv_label>
+			<lv_image src="icon_close" x="474" y="102" clickable="true" ext_click_area="20">
+				<style name="style_icon_dim" />
+				<style name="style_pressed" selector="pressed" />
+				<set_subject_event subject="subject_settings_open" value="0" />
+			</lv_image>
+
+			<box
+				width="540"
+				height="84"
+				x="20"
+				y="196"
+				clickable="true"
+				flex_flow="row"
+				style_flex_cross_place="center" style_flex_track_place="center"
+				style_pad_left="24"
+				style_pad_column="26"
+				style_radius="{radius_row}"
+			>
+				<style name="style_item_pressed" selector="pressed" />
+				<!-- C remembers the screen to return to and closes the drawer -->
+				<event_cb callback="history_open_cb" trigger="clicked" />
+				<screen_load_event screen="screen_history" anim_type="over_top" duration="350" />
+				<lv_image src="icon_thermometer">
+					<style name="style_icon" />
+				</lv_image>
+				<lv_label text="Temperature History" style_text_color="0xE2E2E8" style_text_font="font_body" />
+			</box>
+		</box>
+	</view>
+</component>

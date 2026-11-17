@@ -1,0 +1,74 @@
+<!-- Walks the flow of the reference video: Controls, A/C, Settings, Temperature History and back -->
+<test>
+	<view extends="screen_controls" />
+
+	<steps>
+		<subject_set subject="subject_feature" value="0" />
+		<subject_set subject="subject_threshold" value="26" />
+		<subject_set subject="subject_temp_control" value="2" />
+		<subject_set subject="subject_settings_open" value="0" />
+		<!-- Let the intro finish -->
+		<wait ms="2000" />
+
+		<!-- A pressed side icon grows -->
+		<move_to x="69" y="717" />
+		<wait ms="50" />
+		<press />
+		<wait ms="400" />
+		<screenshot_compare path="ref/flow_0_pressed.png" />
+		<release />
+		<wait ms="300" />
+
+		<!-- Right panel: one shortcut at a time, and the selected one is larger -->
+		<click_at x="651" y="988" />
+		<wait ms="300" />
+		<subject_compare subject="subject_feature" value="2" />
+		<screenshot_compare path="ref/flow_1_controls.png" />
+
+		<!-- Fan: to the A/C screen, where the sheet opens by itself -->
+		<click_at x="69" y="854" />
+		<wait ms="2000" />
+		<subject_compare subject="subject_sheet_pos" value="100" />
+
+		<!-- NO A/C, one step down, then the 18 degree preset -->
+		<click_at x="360" y="809" />
+		<wait ms="400" />
+		<subject_compare subject="subject_temp_control" value="1" />
+		<click_at x="236" y="975" />
+		<wait ms="200" />
+		<subject_compare subject="subject_threshold" value="25" />
+		<click_at x="162" y="1073" />
+		<wait ms="1000" />
+		<subject_compare subject="subject_threshold" value="18" />
+		<screenshot_compare path="ref/flow_2_ac.png" />
+
+		<!-- Drag the sheet down by its header -->
+		<move_to x="360" y="200" />
+		<wait ms="50" />
+		<press />
+		<wait ms="50" />
+		<move_to x="360" y="600" />
+		<wait ms="50" />
+		<move_to x="360" y="900" />
+		<wait ms="50" />
+		<release />
+		<wait ms="800" />
+		<subject_compare subject="subject_sheet_pos" value="0" />
+		<screenshot_compare path="ref/flow_3_car.png" />
+
+		<!-- Settings drawer, then the history: the newest entry is the 18 degrees set above -->
+		<click_at x="648" y="92" />
+		<wait ms="600" />
+		<subject_compare subject="subject_settings_open" value="1" />
+		<screenshot_compare path="ref/flow_4_settings.png" />
+		<click_at x="400" y="238" />
+		<wait ms="800" />
+		<screenshot_compare path="ref/flow_5_history.png" />
+
+		<!-- Close: back on the A/C screen, the sheet as it was left -->
+		<click_at x="662" y="102" />
+		<wait ms="800" />
+		<subject_compare subject="subject_sheet_pos" value="0" />
+		<screenshot_compare path="ref/flow_6_back.png" />
+	</steps>
+</test>

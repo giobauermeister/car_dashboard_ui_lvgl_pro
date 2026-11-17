@@ -1,0 +1,79 @@
+<!-- A round icon button of the side panels. The icon grows a bit while it is pressed, and
+     `active` shows it as the selected shortcut: larger still, in a gradient ring.
+     The view passes its states to the children, so their styles animate with it. -->
+<component>
+	<previews>
+		<preview name="default" width="170" height="170" style_bg_color="0x0a0b16" style_pad_all="30" />
+	</previews>
+
+	<api>
+		<prop name="icon" type="image" help="The a8 icon to show, drawn at the size of the selected state" />
+		<prop name="active" type="bool" default="false" bindable="true" help="Highlight the button as the selected one" />
+	</api>
+
+	<consts>
+		<!-- 256 is the full size of the icon image -->
+		<int name="icon_scale_idle" value="200" />
+		<int name="icon_scale_pressed" value="228" />
+		<int name="icon_scale_active" value="256" />
+	</consts>
+
+	<styles>
+		<!-- The ring is a gradient circle, with the fill on top of all but its rim -->
+		<style
+			name="style_ring"
+			radius="1000"
+			bg_opa="0"
+			bg_color="0x5452B8"
+			bg_grad_color="0x9C2C5E"
+			bg_grad_dir="ver"
+			border_width="0"
+			pad_all="0"
+		>
+			<transition props="bg_opa" duration="220" />
+		</style>
+		<style name="style_ring_active" bg_opa="255" />
+
+		<style name="style_fill" radius="1000" bg_opa="0" bg_color="0x0E2250" bg_grad_color="0x501A40" bg_grad_dir="ver">
+			<transition props="bg_opa" duration="220" />
+		</style>
+		<style name="style_fill_active" bg_opa="255" />
+
+		<style
+			name="style_glyph"
+			image_recolor="0xD2D2D8"
+			image_recolor_opa="255"
+			transform_scale_x="{icon_scale_idle}"
+			transform_scale_y="{icon_scale_idle}"
+			transform_pivot_x="50%"
+			transform_pivot_y="50%"
+		>
+			<transition props="transform_scale_x transform_scale_y image_recolor" duration="220" easing="ease_out" />
+		</style>
+		<style name="style_glyph_pressed" transform_scale_x="{icon_scale_pressed}" transform_scale_y="{icon_scale_pressed}" />
+		<style
+			name="style_glyph_active"
+			image_recolor="0xB9BEF2"
+			transform_scale_x="{icon_scale_active}"
+			transform_scale_y="{icon_scale_active}"
+		/>
+	</styles>
+
+	<view extends="lv_obj" width="92" height="92" scrollable="false" state_trickle="true" checked="{active}">
+		<style name="style_ring" />
+		<style name="style_ring_active" selector="checked" />
+
+		<!-- `checked` is bound on the children too: the exported C sets the view's initial state
+		     before it creates them (LVGL Pro CLI 2.1.0), and state_trickle passes on changes only -->
+		<box width="88" height="88" align="center" clickable="false" checked="{active}">
+			<style name="style_fill" />
+			<style name="style_fill_active" selector="checked" />
+		</box>
+
+		<lv_image src="{icon}" align="center" checked="{active}">
+			<style name="style_glyph" />
+			<style name="style_glyph_active" selector="checked" />
+			<style name="style_glyph_pressed" selector="pressed" />
+		</lv_image>
+	</view>
+</component>

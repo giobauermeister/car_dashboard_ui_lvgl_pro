@@ -1,0 +1,7 @@
+<project name="car_ac_ui" theme="simple" lvgl_version="9.6.0">
+	<targets>
+		<target name="target1">
+			<display width="720" height="1280" />
+		</target>
+	</targets>
+</project>

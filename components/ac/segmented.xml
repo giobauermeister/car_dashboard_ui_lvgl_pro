@@ -1,0 +1,56 @@
+<!-- Three options, one int subject (0..2). The gradient pill slides to the selected option:
+     its position is a style of the user_1 / user_2 states, so the state change animates it. -->
+<component>
+	<previews>
+		<preview name="default" width="660" height="130" style_bg_color="0x16181f" style_pad_all="30" />
+	</previews>
+
+	<api>
+		<prop name="subject" type="subject" help="Int subject holding the selected index, 0..2" />
+		<prop name="text_0" type="string" default="A" help="Label of the first option" />
+		<prop name="text_1" type="string" default="B" help="Label of the second option" />
+		<prop name="text_2" type="string" default="C" help="Label of the third option" />
+	</api>
+
+	<styles>
+		<style name="style_track" bg_opa="255" bg_color="{color_track}" radius="{radius_row}" />
+		<style name="style_pill" radius="{radius_row}" translate_x="0" shadow_width="14" shadow_color="{color_bg}" shadow_opa="50%">
+			<transition props="translate_x" duration="250" easing="ease_out" />
+		</style>
+		<style name="style_pill_1" translate_x="{seg_w}" />
+		<style name="style_pill_2" translate_x="{seg_w * 2}" />
+		<style name="style_option_text" text_font="font_body" text_color="0xD6D6DE" />
+	</styles>
+
+	<view extends="box" width="{seg_w * 3}" height="{seg_h}">
+		<style name="style_track" />
+
+		<box width="{seg_w}" height="100%" clickable="false">
+			<style name="style_gradient" />
+			<style name="style_pill" />
+			<style name="style_pill_1" selector="user_1" />
+			<style name="style_pill_2" selector="user_2" />
+			<bind_state_if_eq subject="{subject}" state="user_1" ref_value="1" />
+			<bind_state_if_eq subject="{subject}" state="user_2" ref_value="2" />
+		</box>
+
+		<box width="{seg_w}" height="100%" clickable="true">
+			<set_subject_event subject="{subject}" value="0" />
+			<lv_label text="{text_0}" align="center">
+				<style name="style_option_text" />
+			</lv_label>
+		</box>
+		<box width="{seg_w}" height="100%" x="{seg_w}" clickable="true">
+			<set_subject_event subject="{subject}" value="1" />
+			<lv_label text="{text_1}" align="center">
+				<style name="style_option_text" />
+			</lv_label>
+		</box>
+		<box width="{seg_w}" height="100%" x="{seg_w * 2}" clickable="true">
+			<set_subject_event subject="{subject}" value="2" />
+			<lv_label text="{text_2}" align="center">
+				<style name="style_option_text" />
+			</lv_label>
+		</box>
+	</view>
+</component>

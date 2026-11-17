@@ -1,0 +1,65 @@
+<!-- The gear selector: gradient ring, the engaged gear and the drive mode picker -->
+<component>
+	<previews>
+		<preview name="default" width="440" height="460" style_bg_color="0x000000" style_pad_all="40" />
+	</previews>
+
+	<styles>
+		<style name="style_outline" arc_color="{color_red}" arc_width="3" arc_rounded="true" />
+		<style name="style_outline_idle" arc_color="0x3A3A40" arc_width="3" arc_rounded="true" />
+		<style name="style_band" arc_width="62" arc_rounded="false" arc_color="{color_red}" arc_image_src="img_arc_gear" />
+	</styles>
+
+	<view extends="box" width="{gear_size}" height="{gear_size + 24}">
+		<lv_arc width="{gear_size}" height="{gear_size}" align="top_mid" clickable="false" bg_start_angle="148" bg_end_angle="32">
+			<style name="style_box" />
+			<style name="style_outline" />
+			<style name="style_hidden_part" selector="indicator" />
+			<style name="style_hidden_part" selector="knob" />
+		</lv_arc>
+		<lv_arc width="{gear_size}" height="{gear_size}" align="top_mid" clickable="false" bg_start_angle="42" bg_end_angle="138">
+			<style name="style_box" />
+			<style name="style_outline_idle" />
+			<style name="style_hidden_part" selector="indicator" />
+			<style name="style_hidden_part" selector="knob" />
+		</lv_arc>
+
+		<!-- custom/car_ac_logic.c sweeps this arc open in the intro -->
+		<lv_arc name="gear_band" width="330" height="330" align="top_mid" y="15" clickable="false" bg_start_angle="126" bg_end_angle="45">
+			<style name="style_box" />
+			<style name="style_band" />
+			<style name="style_hidden_part" selector="indicator" />
+			<style name="style_hidden_part" selector="knob" />
+		</lv_arc>
+
+		<lv_label
+			text="{subject_gear == ref_gear_park ? 'P' : 'D'}"
+			align="top_mid"
+			y="126"
+			style_text_font="font_gear"
+			style_text_color="{color_white}"
+		/>
+
+		<!-- Drive mode picker -->
+		<box width="210" height="56" align="top_mid" y="288">
+			<lv_image src="icon_chevron_left" align="left_mid" ext_click_area="16" clickable="true">
+				<style name="style_icon_dim" />
+				<style name="style_pressed" selector="pressed" />
+				<set_subject_event subject="subject_drive_mode" value="{subject_drive_mode - 1}" />
+			</lv_image>
+			<!-- One label per mode. A nested string ternary such as
+			     {mode == 0 ? 'Eco' : (mode == 1 ? 'Comfort' : 'Sport')} previews correctly but
+			     LVGL Pro CLI 2.1.0 exports it to C as "true"/"false". -->
+			<lv_label text="Eco" hidden="{subject_drive_mode != 0}" align="center" style_text_font="font_body" style_text_color="{color_white}" />
+			<lv_label text="Comfort" hidden="{subject_drive_mode != 1}" align="center" style_text_font="font_body" style_text_color="{color_white}" />
+			<lv_label text="Sport" hidden="{subject_drive_mode != 2}" align="center" style_text_font="font_body" style_text_color="{color_white}" />
+			<lv_image src="icon_chevron_right" align="right_mid" ext_click_area="16" clickable="true">
+				<style name="style_icon_dim" />
+				<style name="style_pressed" selector="pressed" />
+				<set_subject_event subject="subject_drive_mode" value="{subject_drive_mode + 1}" />
+			</lv_image>
+		</box>
+
+		<lv_image src="icon_triangle" align="top_mid" y="{gear_size - 14}" style_image_recolor="0xE6E6EA" style_image_recolor_opa="255" />
+	</view>
+</component>

@@ -1,0 +1,165 @@
+<!-- A/C: the car from above, and the Mode Control sheet that is dragged over it.
+     custom/car_ac_logic.c moves the sheet and writes subject_sheet_pos. -->
+<screen permanent="true">
+	<styles>
+		<style name="style_screen" bg_color="{color_bg}" bg_opa="255" />
+		<style
+			name="style_sheet"
+			bg_opa="255"
+			bg_color="{color_sheet_top}"
+			bg_grad_color="{color_sheet_bottom}"
+			bg_grad_dir="ver"
+			radius="{radius_sheet}"
+		/>
+		<style name="style_group" bg_opa="255" bg_color="{color_bg}" radius="{radius_row}" clip_corner="true" />
+		<style name="style_divider" bg_opa="255" bg_color="{color_line}" />
+		<style
+			name="style_card"
+			bg_opa="255"
+			bg_color="{color_card_top}"
+			bg_grad_color="{color_card_bottom}"
+			bg_grad_dir="ver"
+			radius="{radius_card}"
+			border_width="1"
+			border_color="{color_card_border}"
+			pad_hor="34"
+			pad_ver="30"
+		/>
+		<style name="style_round_button" radius="1000" bg_opa="255" bg_color="{color_bg}" />
+		<style name="style_round_button_pressed" bg_color="0x26262C" />
+		<style name="style_threshold" text_font="font_value" text_color="0xD8D8DE" />
+	</styles>
+
+	<view scrollable="false">
+		<style name="style_screen" />
+		<event_cb callback="ac_screen_load_cb" trigger="screen_load_start" />
+		<event_cb callback="ac_screen_loaded_cb" trigger="screen_loaded" />
+
+		<!-- The car moves up as the sheet opens, so the cabin stays in view above it -->
+		<lv_image
+			name="car"
+			src="img_car"
+			align="top_mid"
+			y="132"
+			style_translate_y="{0 - subject_sheet_pos * 36 / 10}"
+			style_image_opa="{255 - subject_sheet_pos / 2}"
+		/>
+
+		<status_bar />
+
+		<box width="100%" height="64" y="60">
+			<box width="content" height="100%" x="30" clickable="true" flex_flow="row" style_flex_cross_place="center" style_flex_track_place="center" style_pad_column="0">
+				<style name="style_pressed" selector="pressed" />
+				<screen_load_event screen="screen_controls" anim_type="fade_in" duration="500" />
+				<lv_image src="icon_back">
+					<style name="style_icon_dim" />
+				</lv_image>
+				<lv_label text="Back" style_text_font="font_title" style_text_color="{color_text_dim}" />
+			</box>
+			<lv_image src="icon_settings" align="right_mid" x="-52" clickable="true" ext_click_area="20">
+				<style name="style_icon_dim" />
+				<style name="style_pressed" selector="pressed" />
+				<set_subject_event subject="subject_settings_open" value="1" />
+			</lv_image>
+		</box>
+
+		<box name="sheet" width="100%" height="{sheet_h}" y="{sheet_closed_y}" clickable="true">
+			<style name="style_sheet" />
+
+			<!-- Drag here to open and close the sheet, or tap to toggle it -->
+			<box name="sheet_handle" width="100%" height="{sheet_handle_h}" clickable="true">
+				<event_cb callback="sheet_handle_event_cb" trigger="all" />
+				<lv_label text="Mode Control" align="top_mid" y="36">
+					<style name="style_text_title" />
+				</lv_label>
+				<lv_label text="{'Exterior ' . subject_exterior_temp . '°   •   Interior ' . subject_interior_temp . '°'}" align="top_mid" y="88">
+					<style name="style_text_dim" />
+				</lv_label>
+			</box>
+
+			<box
+				width="100%"
+				height="content"
+				y="{sheet_handle_h}"
+				flex_flow="column"
+				style_flex_cross_place="center" style_flex_track_place="center"
+				style_pad_hor="{space_page}"
+				style_pad_row="26"
+			>
+				<box width="100%" height="1">
+					<style name="style_divider" />
+				</box>
+
+				<box width="100%" height="content">
+					<style name="style_group" />
+					<mode_row icon="icon_defrost" text="Quick Defrost" active="{subject_defrost == 1}">
+						<set_subject_event subject="subject_defrost" value="{!subject_defrost}" />
+					</mode_row>
+				</box>
+
+				<box width="100%" height="content" flex_flow="column">
+					<style name="style_group" />
+					<mode_row icon="icon_paw" text="Pet Mode" active="{subject_ac_mode == ref_ac_mode_pet}">
+						<set_subject_event subject="subject_ac_mode" value="{ref_ac_mode_pet}" />
+					</mode_row>
+					<mode_row icon="icon_mode_fan" text="Normal Mode" active="{subject_ac_mode == ref_ac_mode_normal}">
+						<set_subject_event subject="subject_ac_mode" value="{ref_ac_mode_normal}" />
+					</mode_row>
+				</box>
+
+				<lv_label text="View Interior Camera" style_pad_ver="6">
+					<style name="style_text_dim" />
+				</lv_label>
+
+				<box width="100%" height="1">
+					<style name="style_divider" />
+				</box>
+
+				<box width="100%" height="content" flex_flow="column" style_pad_row="24">
+					<style name="style_card" />
+
+					<lv_label text="Interior Temperature Control">
+						<style name="style_text_title" />
+					</lv_label>
+					<segmented subject="subject_temp_control" text_0="OFF" text_1="NO A/C" text_2="ON" />
+
+					<lv_label text="Activation Threshold" style_margin_top="10">
+						<style name="style_text_title" />
+					</lv_label>
+
+					<box width="100%" height="76">
+						<box width="68" height="68" align="center" x="-124" clickable="true" ext_click_area="12">
+							<style name="style_round_button" />
+							<style name="style_round_button_pressed" selector="pressed" />
+							<set_subject_event subject="subject_threshold" value="{subject_threshold - 1}" trigger="short_clicked" />
+							<set_subject_event subject="subject_threshold" value="{subject_threshold - 1}" trigger="long_pressed_repeat" />
+							<lv_image src="icon_minus" align="center">
+								<style name="style_icon" />
+							</lv_image>
+						</box>
+						<lv_label text="{subject_threshold . '°'}" align="center" x="6">
+							<style name="style_threshold" />
+						</lv_label>
+						<box width="68" height="68" align="center" x="124" clickable="true" ext_click_area="12">
+							<style name="style_round_button" />
+							<style name="style_round_button_pressed" selector="pressed" />
+							<set_subject_event subject="subject_threshold" value="{subject_threshold + 1}" trigger="short_clicked" />
+							<set_subject_event subject="subject_threshold" value="{subject_threshold + 1}" trigger="long_pressed_repeat" />
+							<lv_image src="icon_plus" align="center">
+								<style name="style_icon" />
+							</lv_image>
+						</box>
+					</box>
+
+					<segmented subject="subject_preset" text_0="18°" text_1="22°" text_2="26°" />
+
+					<lv_label text="Check conditions" width="100%" style_text_align="center" style_margin_top="4">
+						<style name="style_text_dim" />
+					</lv_label>
+				</box>
+			</box>
+		</box>
+
+		<settings_drawer />
+	</view>
+</screen>

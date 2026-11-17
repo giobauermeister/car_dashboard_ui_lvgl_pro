@@ -1,0 +1,6 @@
+<!-- An invisible, non-scrollable container: the building block of every layout -->
+<component>
+	<view extends="lv_obj" scrollable="false">
+		<style name="style_box" />
+	</view>
+</component>
